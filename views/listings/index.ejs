@@ -119,7 +119,7 @@
         </div>
         <div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 mt-3">
             <% for(let listing of allListings){%>
-                <a href="/listings/<%=listing.id%>" class="listing-link">
+                <a href="/listings/<%=listing._id%>" class="listing-link">
                     <div class="card col listing-card">
                         <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image"
                             style="height: 20rem;">
@@ -137,19 +137,4 @@
                 </a>
                 <%}%>
         </div>
-
-        <script>
-            let taxSwitch = document.getElementById("flexSwitchCheckDefault");
-            taxSwitch.addEventListener("click", () => {
-                let taxInfo = document.getElementsByClassName("tax-info");
-                for (let info of taxInfo) {
-                    if (info.style.display != "inline") {
-                        info.style.display = "inline";
-                    }
-                    else {
-                        info.style.display = "none";
-                    }
-                }
-            })
-        </script>
     </body>

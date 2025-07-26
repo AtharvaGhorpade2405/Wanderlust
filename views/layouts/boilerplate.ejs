@@ -29,6 +29,20 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                 crossorigin="anonymous"></script>
             <script src="/js/script.js"></script>
+                    <script>
+            let taxSwitch = document.getElementById("flexSwitchCheckDefault");
+            taxSwitch.addEventListener("click", () => {
+                let taxInfo = document.getElementsByClassName("tax-info");
+                for (let info of taxInfo) {
+                    if (info.style.display != "inline") {
+                        info.style.display = "inline";
+                    }
+                    else {
+                        info.style.display = "none";
+                    }
+                }
+            })
+        </script>
 </body>
 
 </html>

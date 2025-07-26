@@ -19,6 +19,9 @@ router
 //New Route
 router.get("/new", isLoggedIn, listingControllers.renderNewForm);
 
+// Search Route
+router.get("/search",wrapAsync(listingControllers.searchListings));
+
 router.route("/:id")
     .get(wrapAsync(listingControllers.showListing))
     .put(isLoggedIn, isOwner, upload.single('listing[image]'), validateListing, wrapAsync(listingControllers.updateListing))
@@ -29,6 +32,7 @@ router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingControllers.render
 
 //Filter Route
 router.get("/filter/:type", wrapAsync(listingControllers.filterListing));
+
 
 
 module.exports = router;

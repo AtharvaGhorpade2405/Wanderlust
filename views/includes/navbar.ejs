@@ -38,15 +38,15 @@
                 <a class="nav-link" href="/listings">Explore</a>
             </div>
             <div class="navbar-nav ms-auto">
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2 search-inp" type="search" placeholder="Search Destinations">
+                <form class="d-flex" role="search" action="/listings/search" method="get">
+                    <input class="form-control me-2 search-inp" type="search" placeholder="Search Destinations" name="q">
                     <button class="btn search-btn" type="submit"><i
                             class="fa-solid fa-magnifying-glass"></i>Search</button>
                 </form>
             </div>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="/listings/new">Airbnb your home</a>
-                <% if(!currUser ){%>
+                <% if( !currUser ){%>
                     <a class="nav-link" href="/signup"> <b>Sign Up</b></a>
                     <a class="nav-link" href="/login"><b>Log In</b></a>
                     <% } %>
