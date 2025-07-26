@@ -62,3 +62,9 @@ module.exports.destroyListing = async (req, res) => {
     req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
 }
+
+module.exports.filterListing = async (req, res) => {
+    let { type } = req.params;
+    let allListings = await Listing.find({ category: type });
+    res.render("listings/filter.ejs", { allListings });
+}

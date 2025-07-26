@@ -27,4 +27,8 @@ router.route("/:id")
 //Edit Route
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingControllers.renderEditForm));
 
+//Filter Route
+router.get("/filter/:type", wrapAsync(listingControllers.filterListing));
+
+
 module.exports = router;
