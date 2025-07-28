@@ -13,7 +13,7 @@ module.exports.sendMessage = async (req, res) => {
 
   try {
     // Get or initialize chat history in the session
-    if (req.session.chatHistory.length === 0) {
+    if (!req.session.chatHistory) {
       req.session.chatHistory = [
         {
           role: "user",
