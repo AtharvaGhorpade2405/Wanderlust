@@ -13,7 +13,7 @@ async function main() {
   console.log("✅ Connected to MongoDB");
 }
 
-export async function getEmbedding(text) {
+async function getEmbedding(text) {
   const response = await fetch("https://router.huggingface.co/sambanova/v1/embeddings", {
     method: "POST",
     headers: {
@@ -65,3 +65,5 @@ async function addEmbeddings() {
 }
 
 main().then(addEmbeddings);
+
+module.exports.getEmbedding = getEmbedding;
