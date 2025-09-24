@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 // Import your models
 const Listing = require("./models/listing.js");
-const ListingVector = require("./models/listings_vectors.js");
+const listingVectorSchema = require("./models/listings_vectors.js");
 
 const HF_API_KEY = process.env.HUGGINGFACE_API_KEY;
 
@@ -41,7 +41,7 @@ async function addEmbeddings() {
       const vector = await getEmbedding(text);
 
       // Store in ListingVector collection
-      await ListingVector.updateOne(
+      await listingVectorSchema.updateOne(
         { listingId: listing._id },
         { $set: { embedding: vector } },
         { upsert: true } // create if doesn’t exist
