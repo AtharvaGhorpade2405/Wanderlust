@@ -7,11 +7,6 @@ const ListingVector = require("./models/listings_vectors.js");
 
 const HF_API_KEY = process.env.HUGGINGFACE_API_KEY;
 
-async function main() {
-  await mongoose.connect(process.env.ATLASDB_URL);
-  console.log("✅ Connected to MongoDB");
-}
-
 async function getEmbedding(text) {
   const response = await fetch("https://router.huggingface.co/sambanova/v1/embeddings", {
     method: "POST",
@@ -62,7 +57,4 @@ async function addEmbeddings() {
     process.exit(1);
   }
 }
-
-main().then(addEmbeddings);
-
 module.exports.getEmbedding = getEmbedding;
