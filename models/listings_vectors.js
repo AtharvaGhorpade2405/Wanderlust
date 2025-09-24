@@ -13,4 +13,4 @@ const listingVectorSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("ListingVector", listingVectorSchema);
+module.exports = mongoose.model("listingVectorSchema", listingVectorSchema);
