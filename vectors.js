@@ -1,6 +1,5 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const fetch = require("node-fetch");
 
 // Import your models
 const Listing = require("./models/listing.js");
