@@ -28,6 +28,8 @@ const dbUrl = process.env.ATLASDB_URL;
 const MongoStore = require("connect-mongo");
 const chatbotRoutes = require("./routes/chatbot");
 
+app.locals.currUser = null;
+
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   crypto: {
@@ -79,7 +81,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
+  res.locals.currUser = req.user || null;
   next();
 });
 
