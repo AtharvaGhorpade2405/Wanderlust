@@ -9,6 +9,7 @@ const path = require("path");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 var methodOverride = require("method-override");
 app.use(methodOverride("_method"));
 const ejsMate = require("ejs-mate");
@@ -25,6 +26,11 @@ const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
 const dbUrl = process.env.ATLASDB_URL;
 const MongoStore = require("connect-mongo");
+const chatbotRoutes = require("./routes/chatbot");
+
+app.locals.currUser = null;
+app.locals.success = null;
+app.locals.error = null;
 
 app.locals.currUser = null;
 app.locals.success = null;
@@ -49,8 +55,8 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: true,
   cookie: {
+    expires: Date.now() + 1000,
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
   },
 };
@@ -80,21 +86,17 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
+  res.locals.success = req.flash("success") || null;
+  res.locals.error = req.flash("error") || null;
+  res.locals.currUser = req.user || null;
   next();
-});
-
-app.get("/testflash", (req, res) => {
-  req.flash("success", "Test flash works!");
-  res.redirect("/listings/6680526db46e014f6674ae55"); // Replace with a real ID
 });
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 app.use("/listings/filter", listingRouter);
+app.use(chatbotRoutes);
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found! "));

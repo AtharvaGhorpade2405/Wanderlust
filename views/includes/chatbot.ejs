@@ -1,0 +1,215 @@
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <!-- Chatbot Toggle Button -->
+  <button
+    id="chatbotToggle"
+    style="
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background-color: #fe424d;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+    "
+  >
+    💬
+  </button>
+
+  <!-- Chatbot Window -->
+  <div
+    id="chatbotWindow"
+    style="
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 250px;
+      max-height: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 12px 12px 0px 0px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      flex-direction: column;
+    "
+  >
+    <div
+      style="
+        background: #fe424d;
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+        border-radius: 12px 12px 0 0;
+      "
+    >
+      Chat with us
+    </div>
+
+    <div
+      id="chatMessages"
+      style="
+        padding: 10px;
+        flex: 1;
+        overflow-y: auto;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      "
+    ></div>
+
+    <form id="chatForm" style="display: flex; border-top: 1px solid #ccc">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="Type your message..."
+        required
+        style="flex: 1; padding: 8px; border: none"
+      />
+      <button
+        type="submit"
+        style="
+          padding: 8px 10px;
+          background: #fe424d;
+          color: white;
+          border: none;
+        "
+      >
+        Send
+      </button>
+    </form>
+  </div>
+
+  <script>
+        const chatbotToggle = document.getElementById("chatbotToggle");
+        const chatbotWindow = document.getElementById("chatbotWindow");
+        const chatForm = document.getElementById("chatForm");
+        const userInput = document.getElementById("userInput");
+        const chatMessages = document.getElementById("chatMessages");
+
+        <!-- localStorage["chatMessages"] = []; -->
+        // Load chat history from localStorage
+        window.addEventListener("load", () => {
+          const savedMessages = JSON.parse(
+            localStorage.getItem("chatMessages") || "[]"
+          );
+          savedMessages.forEach(({ text, sender }) =>
+            appendMessage(text, sender, false)
+          );
+        });
+
+        // Toggle chat window
+        chatbotToggle.addEventListener("click", () => {
+           chatbotWindow.style.display =
+             chatbotWindow.style.display === "none" ? "flex" : "none";
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+
+        chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      appendMessage(message, "user", true);
+      userInput.value = "";
+
+      // Show "Thinking..." message and keep reference
+      const thinkingMsg = document.createElement("div");
+      thinkingMsg.textContent = "Thinking...";
+      thinkingMsg.style.display = "flex";
+      thinkingMsg.style.alignSelf = "flex-start";
+      thinkingMsg.style.padding = "12px";
+      thinkingMsg.style.marginBottom = "10px";
+      thinkingMsg.style.borderRadius = "20px";
+      thinkingMsg.style.background = "#f1f0f0";
+      thinkingMsg.style.color = "#000";
+      thinkingMsg.style.fontFamily = "sans-serif";
+      thinkingMsg.style.fontSize = "15px";
+      thinkingMsg.style.maxWidth = "90%";
+      thinkingMsg.style.overflowWrap = "break-word";
+      thinkingMsg.style.lineHeight = "1.4";
+
+      chatMessages.appendChild(thinkingMsg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+        const text = await res.text();
+
+        // Replace "Thinking..." with actual response
+        chatMessages.removeChild(thinkingMsg);
+        appendMessage(text, "bot", true);
+      } catch (error) {
+        console.error(error);
+        chatMessages.removeChild(thinkingMsg);
+        appendMessage("Error getting response", "bot", true);
+      }
+    });
+
+
+        // Append and optionally save message
+        function appendMessage(text, sender, save = false) {
+          const msg = document.createElement("div");
+          msg.innerHTML = parseMarkdown(text);
+
+          msg.querySelectorAll("*").forEach((el) => {
+            el.style.margin = "0";
+            el.style.maxWidth="100%"
+            el.style.dispaly="inline"
+          });
+
+          msg.style.display = "flex";
+          msg.style.flexDirection = "column";
+          msg.style.gap="4px"
+          msg.style.alignItems = "center";
+          msg.style.justifyContent = "flex-start";
+          msg.style.padding = "12px";
+          msg.style.marginBottom = "10px";
+          msg.style.borderRadius = "20px";
+          msg.style.maxWidth = "90%";
+          msg.style.lineHeight = "1.4";
+          msg.style.fontSize = "15px";
+          msg.style.fontFamily = "sans-serif";
+          msg.style.overflowWrap="break-word"
+
+          msg.style.alignSelf = sender === "user" ? "flex-end" : "flex-start";
+          msg.style.background = sender === "user" ? "#ffe0e4" : "#f1f0f0";
+          msg.style.color = "#000";
+
+          chatMessages.appendChild(msg);
+          chatMessages.scrollTop=chatMessages.scrollHeight
+
+          if (save) saveMessage(text, sender);
+        }
+        // Show welcome message when the page loads
+        window.addEventListener("DOMContentLoaded", () => {
+          appendMessage(
+            "Hi! How can I help you ? Want to plan a vacation, or want to search for certain listings, I'll do it for you!",
+            "bot"
+          );
+        });
+
+        // Save message to localStorage
+        function saveMessage(text, sender) {
+          const saved = JSON.parse(localStorage.getItem("chatMessages") || "[]");
+          saved.push({ text, sender });
+          localStorage.setItem("chatMessages", JSON.stringify(saved));
+        }
+
+        // Use full markdown support
+        function parseMarkdown(text) {
+          return marked.parse(text);
+        }
+  </script>
+</body>
