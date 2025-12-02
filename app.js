@@ -68,8 +68,8 @@ main()
     console.log(err);
   });
 
-app.listen(8080, () => {
-  console.log("App is listening at port: 8080");
+app.listen(3000, () => {
+  console.log("App is listening at port: 3000");
 });
 
 app.use(session(sessionOptions));

@@ -77,17 +77,19 @@ module.exports.searchListings = async (req, res) => {
   if (!query || query.trim() === "") {
     res.redirect("/listings");
   } else {
-    const allListings = await listings_vectors.aggregate([
-    {
-      $vectorSearch: {
-        index: "vector_index", // name you gave to the index in Atlas
-        path: "embedding",
-        queryVector: getEmbedding(query), // function from vectors.js
-        numCandidates: 100,
-        limit: 5
-      }
-    }
-  ]);
+    let allListings = await Listing.aggregate([
+      {
+        $search: {
+          index: "search",
+          text: {
+            query: query,
+            path: {
+              wildcard: "*",
+            },
+          },
+        },
+      },
+    ]);
     if (allListings.length) res.render("listings/index.ejs", { allListings });
     else {
       req.flash("error", "No listings found!");
