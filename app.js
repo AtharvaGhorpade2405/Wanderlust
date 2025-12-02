@@ -26,6 +26,11 @@ const userRouter = require("./routes/user.js");
 const dbUrl = process.env.ATLASDB_URL;
 const MongoStore = require("connect-mongo");
 
+app.locals.currUser = null;
+app.locals.success = null;
+app.locals.error = null;
+
+
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   crypto: {
