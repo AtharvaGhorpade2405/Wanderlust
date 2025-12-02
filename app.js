@@ -32,10 +32,6 @@ app.locals.currUser = null;
 app.locals.success = null;
 app.locals.error = null;
 
-app.locals.currUser = null;
-app.locals.success = null;
-app.locals.error = null;
-
 
 const store = MongoStore.create({
   mongoUrl: dbUrl,
