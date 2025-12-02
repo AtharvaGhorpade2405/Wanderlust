@@ -1,4 +1,5 @@
 const Listing = require("../models/listing");
+const listings_vectors = require("../models/listings_vectors");
 const { getEmbedding } = require("../vectors");
 
 module.exports.index = async (req, res) => {
@@ -76,7 +77,7 @@ module.exports.searchListings = async (req, res) => {
   if (!query || query.trim() === "") {
     res.redirect("/listings");
   } else {
-    const allListings = await ListingVector.aggregate([
+    const allListings = await listings_vectors.aggregate([
     {
       $vectorSearch: {
         index: "vector_index", // name you gave to the index in Atlas
